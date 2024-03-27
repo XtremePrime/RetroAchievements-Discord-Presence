@@ -5,13 +5,13 @@ A tutorial will follow up, with hopefully some QoL to make it even easier for us
 
 ## Requirements
 
-> Python3
-> requests (https://pypi.org/project/requests/)
-> pypresence (https://pypi.org/project/pypresence/)
-> Discord Application (for the discord client ID)
+- Python3
+- requests (https://pypi.org/project/requests/)
+- pypresence (https://pypi.org/project/pypresence/)
+- Discord Application (for the discord client ID)
 
 ## Running the script
 
 The first argument of your python call should be your Username, then your API_KEY, then your Discord Application Client ID
-Format: *python RANes.py [Username] [API_KEY] [DISCORD_CLIENT_ID]*
-Example: *python RANes.py AverageUser 0X0X0X0X0X0X0X0X 123456789*
+- Format: *python RANes.py [Username] [API_KEY] [DISCORD_CLIENT_ID]*
+- Example: *python RANes.py AverageUser 0X0X0X0X0X0X0X0X 123456789*
