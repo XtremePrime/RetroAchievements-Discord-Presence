@@ -1,6 +1,7 @@
 # RetroAchievements-Discord-Presence
 
 I made this script because I found no simple way to have my RetroAchievements rich presence tracked on discord's rich Presence
+
 A tutorial will follow up, with hopefully some QoL to make it even easier for users to use this script.
 
 ## Requirements
