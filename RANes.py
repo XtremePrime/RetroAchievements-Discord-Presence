@@ -1,58 +1,70 @@
-# XtremePrime 2024
-# -- You will need to setup a discord application for this in order to work. To do so, follow the instructions in the README.md
-# -- Please note: This will not be 100% accurate as it only uses latest data from your retro achievements page
-
-import io
-import requests
-import sys
-import time
+import argparse
+from colorama import Fore, Style, init
+from pprint import pprint
 from pypresence import Presence 
+import requests
+import time
 
-# The first argument of your python call should be your Username, then your API_KEY, then your Discord Application Client ID
-# Ex: 
-# > python RANes.py AverageUser 0X0X0X0X0X0X0X0X 123456789
-USERNAME=str(sys.argv[1])
-API_KEY=str(sys.argv[2])
-RPC_CLIENT_ID = str(sys.argv[3])
+init(autoreset=True)
 
-profile_url = "https://retroachievements.org/API/API_GetUserProfile.php?u={0}&y={1}&z={2}".format(USERNAME, API_KEY, USERNAME)
-print(profile_url)
-
-RPC = Presence(RPC_CLIENT_ID)
-print(">Connecting to Discord App...")
-RPC.connect()
-print(">Connected")
-
-status = True
-
-while(status):
-    print(">GET profile game activity...")
-    response = requests.get(profile_url)
+def get_data(url):
+    response = requests.get(url)
     if response.status_code == 200:
-        data = response.json()
-        print(">Result: {0}".format(data["RichPresenceMsg"]))
-
-        game_params = "?z={0}&y={1}&i={2}".format(USERNAME, API_KEY, data["LastGameID"])
-        game_url = "{0}?{1}".format("https://retroachievements.org/API/API_GetGame.php", game_params)
-        print(">GET game data...")
-        game_response = requests.get(game_url)
-
-        if game_response.status_code == 200:
-            game_data = game_response.json()
-            print(">Result: {0}".format(game_data["GameTitle"]))
-        else:
-            print("Failed to fetch profile data:", response.status_code)
-            status = False
-            break;
+        return response.json()
     else:
-        print("Failed to fetch game data:", game_response.status_code)
-        status = False
-        break;
+        print(Fore.RED + f"Failed to fetch data from {url}, status code: {response.status_code}")
+        return None
 
+def update_presence(RPC, data, game_data, start_time):
+    details = f"{game_data['GameTitle']} ({game_data['ConsoleName']})"
     RPC.update(
         state=data["RichPresenceMsg"],
-        details=game_data["GameTitle"],
-        )
+        details=details,
+        start=start_time,
+    )
 
-    print(">Sleeping...")
-    time.sleep(30)
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('username')
+    parser.add_argument('api_key')
+    parser.add_argument('rpc_client_id')
+    parser.add_argument('--debug', action='store_true')
+    args = parser.parse_args()
+
+    profile_url = f"https://retroachievements.org/API/API_GetUserProfile.php?u={args.username}&y={args.api_key}&z={args.username}"
+
+    start_time = int(time.time())
+
+    RPC = Presence(args.rpc_client_id)
+    print(Fore.CYAN + "Connecting to Discord App...")
+    RPC.connect()
+    print(Fore.MAGENTA + "Connected!")
+
+    while True:
+        print(Fore.CYAN + f"Fetching {args.username}'s RetroAchievements activity...")
+        data = get_data(profile_url)
+        if data is None:
+            break
+
+        print(Fore.MAGENTA + f"Result: {data['RichPresenceMsg']}")
+
+        game_params = f"?z={args.username}&y={args.api_key}&i={data['LastGameID']}"
+        game_url = f"https://retroachievements.org/API/API_GetGame.php{game_params}"
+        print(Fore.CYAN + "Fetching game data...")
+        game_data = get_data(game_url)
+        if game_data is None:
+            break
+
+        print(Fore.MAGENTA + f"Result: {game_data['GameTitle']}")
+
+        if args.debug:
+            print(Fore.YELLOW + "Debug game data:")
+            pprint(game_data)
+
+        update_presence(RPC, data, game_data, start_time)
+
+        print(Fore.CYAN + "Sleeping...")
+        time.sleep(30)
+
+if __name__ == "__main__":
+    main()
