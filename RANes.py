@@ -2,6 +2,7 @@ import argparse
 from colorama import Fore, Style, init
 from pprint import pprint
 from pypresence import Presence 
+import re
 import requests
 import time
 
@@ -15,12 +16,18 @@ def get_data(url):
         print(Fore.RED + f"Failed to fetch data from {url}, status code: {response.status_code}")
         return None
 
+def sanitize_console_name(console_name):
+    sanitized_name = re.sub('[^0-9a-zA-Z]+', '', console_name)
+    return sanitized_name.lower()
+
 def update_presence(RPC, data, game_data, start_time):
     details = f"{game_data['GameTitle']} ({game_data['ConsoleName']})"
     RPC.update(
         state=data["RichPresenceMsg"],
         details=details,
         start=start_time,
+        large_image="ra_logo",
+        small_image=sanitize_console_name(game_data['ConsoleName'])
     )
 
 def main():
