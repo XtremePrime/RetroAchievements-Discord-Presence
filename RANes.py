@@ -40,14 +40,14 @@ while(status):
         if game_response.status_code == 200:
             game_data = game_response.json()
             print(">Result: {0}".format(game_data["GameTitle"]))
-
-            # Print each key-value pair in the game_data dictionary
-            for key, value in game_data.items():
-                print(f"{key}: {value}")
         else:
             print("Failed to fetch profile data:", response.status_code)
             status = False
             break;
+    else:
+        print("Failed to fetch game data:", game_response.status_code)
+        status = False
+        break;
 
     RPC.update(
         state=data["RichPresenceMsg"],
