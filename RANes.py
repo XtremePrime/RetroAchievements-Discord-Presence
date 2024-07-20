@@ -14,6 +14,14 @@ from pypresence import Presence
 USERNAME=str(sys.argv[1])
 API_KEY=str(sys.argv[2])
 RPC_CLIENT_ID = str(sys.argv[3])
+SLEEP_TIMER = 30
+
+#Sleep
+if len(sys.argv) > 4:
+    SLEEP_TIMER = int(sys.argv[4])
+else:
+    SLEEP_TIMER = 30
+
 
 profile_url = "https://retroachievements.org/API/API_GetUserProfile.php?u={0}&y={1}&z={2}".format(USERNAME, API_KEY, USERNAME)
 print(profile_url)
@@ -54,5 +62,5 @@ while(status):
         details=game_data["GameTitle"],
         )
 
-    print(">Sleeping...")
-    time.sleep(30)
+    print(">Sleeping for {0}s...".format(SLEEP_TIMER))
+    time.sleep(SLEEP_TIMER)
