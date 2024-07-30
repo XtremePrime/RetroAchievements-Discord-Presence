@@ -7,6 +7,7 @@ from pypresence import Presence
 import re
 import requests
 import time
+import os.path
 
 init(autoreset=True)
 
@@ -37,14 +38,32 @@ def update_presence(RPC, data, game_data, start_time, username):
         buttons=[{"label": "View RA Profile", "url": f"https://retroachievements.org/user/{username}"}]
     )
 
+def setup_config():
+    config_file = open("config.ini","w")
+    print(f'Enter username: ')
+    usr = input()
+    print(f'Enter api_key: ')
+    api = input()  
+
+    data = "[DISCORD]\nusername = "+str(usr)+"\napi_key = "+str(api)+"\nclient_id = -1"
+
+    config_file.write(data)
+    config_file.close()
+
 def main():
+    if(os.path.exists('config.ini') == False):
+        print(Fore.YELLOW + f"Config file not found. Running first time setup...")
+        setup_config()
+
     config = configparser.ConfigParser()
     config.read('config.ini')
     
     username = config.get('DISCORD', 'username')
     api_key = config.get('DISCORD', 'api_key')
     client_id = config.get('DISCORD', 'client_id') if config.has_option('DISCORD', 'client_id') else "1249693940299333642"
-    
+    if(client_id == "-1"):
+        client_id = "1249693940299333642"
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', action='store_true', help='Print debug information')
     parser.add_argument('--fetch', type=int, default=30, help='Time to sleep before fetches in seconds')
