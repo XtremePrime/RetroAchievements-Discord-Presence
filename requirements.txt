@@ -1,0 +1,4 @@
+colorama>=0.4.4
+configparser>=5.0.2
+pypresence>=4.2.0
+requests>=2.25.1
