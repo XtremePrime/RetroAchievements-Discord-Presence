@@ -40,9 +40,9 @@ def update_presence(RPC, data, game_data, start_time, username):
 
 def setup_config():
     config_file = open("config.ini","w")
-    print(f'Enter username: ')
+    print(f'Enter RetroAchievements username: ')
     usr = input()
-    print(f'Enter api_key: ')
+    print(f'Enter RetroAchievements api_key: ')
     api = input()  
 
     data = "[DISCORD]\nusername = "+str(usr)+"\napi_key = "+str(api)+"\nclient_id = -1"
