@@ -23,9 +23,16 @@ def sanitize_console_name(console_name):
     sanitized_name = re.sub('[^0-9a-zA-Z]+', '', console_name)
     return sanitized_name.lower()
 
+#RA Games don't all have full dates, but they follow a consistent pattern where the year is the last token:
+#-- Year 
+#-- Month Year
+#-- Month Day, Year 
+def get_release_year(release_date):
+    tokens = release_date.split(' ')
+    return tokens[len(tokens)-1]
+
 def update_presence(RPC, data, game_data, start_time, username):
-    release_date = datetime.strptime(game_data['Released'], '%B %d, %Y')
-    year_of_release = release_date.year
+    year_of_release = get_release_year(game_data['Released'])
     details = f"{game_data['GameTitle']} ({year_of_release})"
     RPC.update(
         state=data["RichPresenceMsg"],
